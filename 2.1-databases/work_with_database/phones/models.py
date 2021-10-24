@@ -1,11 +1,11 @@
 from django.db import models
 
 
-class Phone(models.Model):
+class Phone1(models.Model):
     name = models.CharField(max_length=128)
-    price = models.FloatField()
-    image = models.TextField()
-    release_date = models.DateField()
+    price = models.CharField(max_length=50)
+    image = models.ImageField()
+    release_date = models.DateField(null=True)
     lte_exists = models.BooleanField()
     slug = models.SlugField()
 

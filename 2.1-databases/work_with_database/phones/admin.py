@@ -1,5 +1,5 @@
 from django.contrib import admin
-from phones.models import Phone
+from phones.models import Phone1
 
 
 # # ТУТ Я НИЧЕГО НЕ ПОНИМАЮ!!!!
@@ -13,4 +13,4 @@ class PhoneAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(Phone, PhoneAdmin)
+admin.site.register(Phone1, PhoneAdmin)
