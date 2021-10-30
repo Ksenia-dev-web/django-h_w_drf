@@ -1,4 +1,5 @@
 from django.db import models
+from simple_crud import settings
 
 
 class Project(models.Model):
@@ -26,3 +27,4 @@ class Measurement(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )
+    photo = models.ImageField(max_length=None, null=True, blank=True, upload_to='measurement')

@@ -1,0 +1,2 @@
+def new_file_path(instance, filename):
+    return f'{instance.project.name}/{instance.created_at.strftime("%Y-%d-%m")}/{filename}'
