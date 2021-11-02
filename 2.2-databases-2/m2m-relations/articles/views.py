@@ -1,6 +1,6 @@
 from django.views.generic import ListView
-
-from articles.models import Article
+from django.shortcuts import render
+from articles.models import Article, ArticleTag, ArticleMainTag
 
 
 class ArticleListView(ListView):
