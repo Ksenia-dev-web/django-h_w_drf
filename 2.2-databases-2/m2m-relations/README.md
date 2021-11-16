@@ -142,7 +142,7 @@ python manage.py migrate
 Загрузить тестовые данные:
 
 ```bash
-python manage.py loaddata articles.json
+python3 manage.py loaddata articles.json
 ```
 
 Запустить отладочный веб-сервер проекта:

@@ -1,9 +1,9 @@
-from django.views.generic import ListView
-from django.shortcuts import render
-from articles.models import Article, ArticleTag, ArticleMainTag
+
+from django.views.generic import ListView  # класс представления, создает список объектов из набора запросов
+from articles.models import Article
 
 
-class ArticleListView(ListView):
-    template_name = 'articles/news.html'
-    model = Article
-    ordering = '-published_at'
+class ArticleList(ListView):  # создаем  свой класс на основе ListView
+    model = Article  # модель, с которой работает представление
+    template_name = 'articles/news.html'  # шаблон
+    ordering = '-published_at'  # сортировка по дате

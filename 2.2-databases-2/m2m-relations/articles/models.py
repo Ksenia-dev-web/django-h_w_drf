@@ -1,37 +1,46 @@
 from django.db import models
 
 
-class ArticleTag(models.Model):
-    topic = models.CharField(max_length=256, verbose_name='Тема статьи')
+class Article(models.Model):  # основная таблица
+	title = models.CharField(max_length=256, verbose_name='Название')
+	text = models.TextField(verbose_name='Текст')
+	published_at = models.DateTimeField(verbose_name='Дата публикации')
+	image = models.ImageField(null=True, blank=True, verbose_name='Изображение', )
 
-    class Meta:
-        ordering = ['topic']
-        verbose_name = 'Тема статьи'
-        verbose_name_plural = 'Темы статьи'
+	class Meta:
+		verbose_name = 'Статья'
+		verbose_name_plural = 'Статьи'
 
-    def __str__(self):
-        return self.topic
-
-
-class Article(models.Model):
-    title = models.CharField(max_length=256, verbose_name='Название')
-    text = models.TextField(verbose_name='Текст')
-    published_at = models.DateTimeField(verbose_name='Дата публикации')
-    image = models.ImageField(null=True, blank=True, verbose_name='Изображение',)
-    article_tag = models.ManyToManyField(ArticleTag, through='ArticleMainTag')
-
-    class Meta:
-        verbose_name = 'Статья'
-        verbose_name_plural = 'Статьи'
-
-    def __str__(self):
-        return self.title
+	def __str__(self):
+		return self.title
 
 
-class ArticleMainTag(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    article_tag = models.ForeignKey(ArticleTag, on_delete=models.CASCADE)
-    is_main = models.BooleanField(verbose_name='Главный раздел')
+class Scope(models.Model):  # таблица тэгов
+	theme = models.TextField(verbose_name='Категория', unique=True)
+	articles = models.ManyToManyField(Article, blank=True, related_name='scopes', through='ArticleScope')
 
-    class Meta:
-        ordering = ['-is_main']
+	def __str__(self):
+		return self.theme
+
+	class Meta:
+		verbose_name = 'Тема'
+		verbose_name_plural = 'Темы'
+
+
+class ArticleScope(models.Model):  # промежуточная таблица
+	article = models.ForeignKey(Article, related_name='article_theme', on_delete=models.CASCADE)
+	theme = models.ForeignKey(Scope, verbose_name='Раздел', related_name='theme_article', on_delete=models.CASCADE)
+	main = models.BooleanField(verbose_name='Основной', default=False)
+
+	def __str__(self):
+		return f'{self.article} - {self.theme} - {self.main}'
+
+	class Meta:
+		verbose_name = 'Тема статьи'
+		verbose_name_plural = 'Темы статей'
+		ordering = ['-main', 'theme__theme']  # сортировка
+
+# {% for scope in article.scopes.all %}
+#     <span class="badge {% if scope.is_main %}badge-primary{% else %}badge-secondary{% endif %}">{{ scope.tag.name }}</span>
+# {% for scope in article.articlescope_set.all %}
+#           <span class="badge {% if scope.is_main == True %}badge-primary{% else %}badge-secondary{% endif %}">{{ scope.scope }}</span>

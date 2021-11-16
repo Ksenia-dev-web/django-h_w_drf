@@ -1,7 +1,6 @@
 from django.urls import path
-
-from articles.views import ArticleListView
+from articles.views import ArticleList
 
 urlpatterns = [
-    path('', ArticleListView.as_view()),
+    path('', ArticleList.as_view(), name='articles'),  # привязка класса представления к текущему маршруту
 ]

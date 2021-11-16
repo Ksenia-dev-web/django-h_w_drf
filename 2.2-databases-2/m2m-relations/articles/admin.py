@@ -1,34 +1,34 @@
 from django.contrib import admin
-from django.core.exceptions import ValidationError
-from django.forms import BaseInlineFormSet
-from .models import Article, ArticleMainTag, ArticleTag
-
-from .models import Article
-
-class ArticleTagInlineFormset(BaseInlineFormSet):
-    def clean(self):
-        is_marked = 0
-        for form in self.forms:
-            if is_marked > 1:
-                raise ValidationError('Please mark only one main tag')
-            if form.cleaned_data.get('is_main'):
-                is_marked += 1
-        if is_marked == 0:
-            raise ValidationError('Need to mark main tag')
-        return super().clean()  # вызываем базовый код переопределяемого метода
+from django.core.exceptions import ValidationError  # Проверка форм и полей формы
+from django.forms import BaseInlineFormSet  #  вложенные формы
+from .models import Article, Scope, ArticleScope
 
 
-class ArticleMainTagInline(admin.TabularInline):
-    model = ArticleMainTag
-    formset = ArticleTagInlineFormset
+class ArticleScopeInlineFormset(BaseInlineFormSet):
+	def clean(self):
+		for form in self.forms:
+			# В form.cleaned_data будет словарь с данными
+			# каждой отдельной формы, которые вы можете проверить
+			form.cleaned_data
+			# вызовом исключения ValidationError можно указать админке о наличие ошибки
+			# таким образом объект не будет сохранен,
+			# а пользователю выведется соответствующее сообщение об ошибке
+			raise ValidationError('Тут всегда ошибка')
+		return super().clean()  # вызываем базовый код переопределяемого метода
 
 
-@admin.register(Article)
+class ArticleScopeInline(admin.TabularInline):
+	model = ArticleScope
+	extra = 1
+
+
 class ArticleAdmin(admin.ModelAdmin):
-    inlines = [ArticleMainTagInline]
+	inlines = (ArticleScopeInline,)
 
 
-@admin.register(ArticleTag)
-class ArticleTagAdmin(admin.ModelAdmin):
-    pass
+class ScopeAdmin(admin.ModelAdmin):
+	inlines = (ArticleScopeInline,)
 
+
+admin.site.register(Article, ArticleAdmin)
+admin.site.register(Scope, ScopeAdmin)
