@@ -15,7 +15,7 @@ class Article(models.Model):  # основная таблица
 		return self.title
 
 
-class Scope(models.Model):  # таблица тэгов
+class Scope(models.Model):
 	theme = models.TextField(verbose_name='Категория', unique=True)
 	articles = models.ManyToManyField(Article, blank=True, related_name='scopes', through='ArticleScope')
 
@@ -27,7 +27,7 @@ class Scope(models.Model):  # таблица тэгов
 		verbose_name_plural = 'Темы'
 
 
-class ArticleScope(models.Model):  # промежуточная таблица
+class ArticleScope(models.Model):
 	article = models.ForeignKey(Article, related_name='article_theme', on_delete=models.CASCADE)
 	theme = models.ForeignKey(Scope, verbose_name='Раздел', related_name='theme_article', on_delete=models.CASCADE)
 	main = models.BooleanField(verbose_name='Основной', default=False)
@@ -38,9 +38,4 @@ class ArticleScope(models.Model):  # промежуточная таблица
 	class Meta:
 		verbose_name = 'Тема статьи'
 		verbose_name_plural = 'Темы статей'
-		ordering = ['-main', 'theme__theme']  # сортировка
-
-# {% for scope in article.scopes.all %}
-#     <span class="badge {% if scope.is_main %}badge-primary{% else %}badge-secondary{% endif %}">{{ scope.tag.name }}</span>
-# {% for scope in article.articlescope_set.all %}
-#           <span class="badge {% if scope.is_main == True %}badge-primary{% else %}badge-secondary{% endif %}">{{ scope.scope }}</span>
+		ordering = ['-main', 'theme__theme']
