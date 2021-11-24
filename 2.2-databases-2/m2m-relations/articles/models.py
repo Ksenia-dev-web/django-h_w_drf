@@ -6,6 +6,7 @@ class Article(models.Model):  # основная таблица
 	text = models.TextField(verbose_name='Текст')
 	published_at = models.DateTimeField(verbose_name='Дата публикации')
 	image = models.ImageField(null=True, blank=True, verbose_name='Изображение', )
+	articles = models.ManyToManyField('Scope', through='ArticleScope')
 
 	class Meta:
 		verbose_name = 'Статья'
@@ -17,7 +18,6 @@ class Article(models.Model):  # основная таблица
 
 class Scope(models.Model):
 	theme = models.TextField(verbose_name='Категория', unique=True)
-	articles = models.ManyToManyField(Article, blank=True, related_name='scopes', through='ArticleScope')
 
 	def __str__(self):
 		return self.theme
@@ -28,14 +28,14 @@ class Scope(models.Model):
 
 
 class ArticleScope(models.Model):
-	article = models.ForeignKey(Article, related_name='article_theme', on_delete=models.CASCADE)
-	theme = models.ForeignKey(Scope, verbose_name='Раздел', related_name='theme_article', on_delete=models.CASCADE)
-	main = models.BooleanField(verbose_name='Основной', default=False)
+	article = models.ForeignKey(Article, related_name='scopes', on_delete=models.CASCADE)
+	theme = models.ForeignKey(Scope, verbose_name='Раздел', related_name='scopes', on_delete=models.CASCADE)
+	is_main = models.BooleanField(verbose_name='Основной', default=False)
 
 	def __str__(self):
-		return f'{self.article} - {self.theme} - {self.main}'
+		return f'{self.article} - {self.theme} - {self.is_main}'
 
 	class Meta:
 		verbose_name = 'Тема статьи'
 		verbose_name_plural = 'Темы статей'
-		ordering = ['-main', 'theme__theme']
+		ordering = ['-is_main', 'theme__theme']
